@@ -1,7 +1,8 @@
 import * as fs from 'fs'
 
-async function run_day(day: number, part1: boolean, part2: boolean) {
-    let results
+async function run_day(day: number, part: number) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let results: any
     try {
         results = JSON.parse(fs.readFileSync('input/results.json', 'utf8'))
     } catch {
@@ -20,31 +21,32 @@ async function run_day(day: number, part1: boolean, part2: boolean) {
     } else {
         parsed_input = input
     }
-    const parsed_input_clone = structuredClone(parsed_input)
-    if (part1) {
-        console.log('Part 1:')
-        const part1_result = runner.part1(parsed_input)
-        console.log(part1_result)
-        const saved_result = results[day]?.[0]
+
+    const run_part = (part: number) => {
+        console.log(`Part ${part}:`)
+        let result
+        if (part == 1) {
+            result = runner.part1(structuredClone(parsed_input))
+        } else {
+            result = runner.part2(structuredClone(parsed_input))
+        }
+        console.log(result)
+        const saved_result = results[day]?.[part - 1]
         if (saved_result == undefined) {
             console.log('New value!')
-        } else if (saved_result != part1_result) {
+        } else if (saved_result != result) {
             console.log(`Result is different from real result: ${saved_result}`)
         }
     }
-    if (part2) {
-        console.log('Part 2:')
-        const part2_result = runner.part2(parsed_input_clone)
-        console.log(part2_result)
-        const saved_result = results[day]?.[1]
-        if (saved_result == undefined) {
-            console.log('New value!')
-        } else if (saved_result != part2_result) {
-            console.log(`Result is different from real result: ${saved_result}`)
-        }
+
+    if (part != 2) {
+        run_part(1)
+    }
+    if (part != 1) {
+        run_part(2)
     }
 }
-async function run_day_profile(day: number, part: number) {
+async function run_profile(day: number, part: number) {
     const input = fs.readFileSync(`input/${day}.txt`, 'utf8').trim()
 
     const runner = await import(`./days/${day}`)
@@ -56,11 +58,15 @@ async function run_day_profile(day: number, part: number) {
         parsed_input = input
     }
 
-    if (part != 2) {
+    if (part == 0) {
+        const result = runner.part1(structuredClone(parsed_input))
+        console.log(result)
+        const result2 = runner.part2(parsed_input)
+        console.log(result2)
+    } else if (part == 1) {
         const result = runner.part1(parsed_input)
         console.log(result)
-    }
-    if (part != 1) {
+    } else if (part == 2) {
         const result = runner.part2(parsed_input)
         console.log(result)
     }
@@ -70,7 +76,7 @@ const latest_day = 11
 import Benchmark, { Event } from 'benchmark'
 import { prettylog } from './helpers/prettybench'
 
-async function run_all_bench(bench_day: number, bench_part: number) {
+async function run_bench(bench_day: number, part: number) {
     let suite = new Benchmark.Suite()
     const start = bench_day == 0 ? 1 : bench_day
     const end = bench_day == 0 ? latest_day : bench_day
@@ -86,17 +92,17 @@ async function run_all_bench(bench_day: number, bench_part: number) {
             parsed_input = input
         }
 
-        if (bench_part == 0 && runner.parse != undefined) {
+        if (part == 0 && runner.parse != undefined) {
             suite = suite.add(`Day ${day} Parse`, () => {
                 runner.parse(structuredClone(input))
             })
         }
-        if (bench_part != 2) {
+        if (part != 2) {
             suite = suite.add(`Day ${day} Part 1`, () => {
                 runner.part1(structuredClone(parsed_input))
             })
         }
-        if (bench_part != 1) {
+        if (part != 1) {
             suite = suite.add(`Day ${day} Part 2`, () => {
                 runner.part2(structuredClone(parsed_input))
             })
@@ -110,27 +116,24 @@ async function run_all_bench(bench_day: number, bench_part: number) {
 
 async function main() {
     const run = process.argv[2] ?? 'all'
+    const day = Number(process.argv[3] ?? 0)
+    const part = Number(process.argv[4] ?? 0)
     switch (run) {
         case 'all':
             for (let day = 1; day <= latest_day; day++) {
-                await run_day(day, true, true)
+                await run_day(day, 0)
             }
             break
         case 'day': {
-            const day = Number(process.argv[3] ?? latest_day)
-            await run_day(day, process.argv[4] != '2', process.argv[4] != '1')
+            await run_day(day == 0 ? latest_day : day, part)
             break
         }
         case 'profile': {
-            const day = Number(process.argv[3] ?? latest_day)
-            const part = Number(process.argv[4] ?? 0)
-            await run_day_profile(day, part)
+            await run_profile(day == 0 ? latest_day : day, part)
             break
         }
         case 'bench': {
-            const day = Number(process.argv[3] ?? 0)
-            const part = Number(process.argv[4] ?? 0)
-            await run_all_bench(day, part)
+            await run_bench(day, part)
             break
         }
     }
