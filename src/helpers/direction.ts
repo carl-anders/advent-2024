@@ -16,6 +16,24 @@ export function turnRight(direction: Direction): Direction {
             return Direction.North
     }
 }
+export function turnLeft(direction: Direction): Direction {
+    switch (direction) {
+        case Direction.North:
+            return Direction.West
+        case Direction.East:
+            return Direction.North
+        case Direction.South:
+            return Direction.East
+        case Direction.West:
+            return Direction.South
+    }
+}
+export const directions = [
+    Direction.North,
+    Direction.East,
+    Direction.South,
+    Direction.West,
+]
 export const move_deltas = {
     [Direction.North]: { x: 0, y: -1 },
     [Direction.East]: { x: 1, y: 0 },
