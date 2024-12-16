@@ -28,3 +28,9 @@ export const move_delta_list = [
     { x: -1, y: 0 },
     { x: 0, y: -1 },
 ]
+export const direction_description = {
+    [Direction.North]: 'North',
+    [Direction.East]: 'East',
+    [Direction.South]: 'South',
+    [Direction.West]: 'West',
+}
