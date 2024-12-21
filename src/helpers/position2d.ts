@@ -33,3 +33,6 @@ export function addPosition(a: Position, b: Position): Position {
 export function addDirection(pos: Position, dir: Direction): Position {
     return addPosition(pos, move_deltas[dir])
 }
+export function PositionEq(a: Position, b: Position): boolean {
+    return a.x == b.x && a.y == b.y
+}
