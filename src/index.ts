@@ -71,7 +71,7 @@ async function run_profile(day: number, part: number) {
         console.log(result)
     }
 }
-const latest_day = 22
+const latest_day = 25
 
 import Benchmark, { Event } from 'benchmark'
 import { prettylog } from './helpers/prettybench'
