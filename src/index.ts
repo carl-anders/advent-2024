@@ -31,11 +31,14 @@ async function run_day(day: number, part: number) {
             result = runner.part2(structuredClone(parsed_input))
         }
         console.log(result)
-        const saved_result = results[day]?.[part - 1]
-        if (saved_result == undefined) {
+
+        if (results == undefined) {
             console.log('New value!')
-        } else if (saved_result != result) {
-            console.log(`Result is different from real result: ${saved_result}`)
+        } else {
+            const saved_result = results[day]?.[part - 1]
+            if (saved_result != result) {
+                console.log(`Result is different from real result: ${saved_result}`)
+            }
         }
     }
 
