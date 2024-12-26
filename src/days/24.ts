@@ -3,12 +3,27 @@ export function parse(input: string) {
     const wire_map = new Map<string, Wire>()
     for (const line of nums.split(/\r?\n/)) {
         const [name, value] = line.split(': ')
-        wire_map.set(name, { type: WireType.Num, inputs: [], name, value: Number(value) })
+        wire_map.set(name, {
+            type: WireType.Num,
+            inputs: [],
+            name,
+            value: Number(value),
+        })
     }
     for (const line of wires.split(/\r?\n/)) {
         const [inputs, output] = line.split(' -> ')
         const [input1, type, input2] = inputs.split(' ')
-        wire_map.set(output, { type: (type == 'XOR' ? WireType.Xor : (type == 'AND' ? WireType.And : WireType.Or)), inputs: [input1, input2], name: output, value: undefined })
+        wire_map.set(output, {
+            type:
+                type == 'XOR'
+                    ? WireType.Xor
+                    : type == 'AND'
+                      ? WireType.And
+                      : WireType.Or,
+            inputs: [input1, input2],
+            name: output,
+            value: undefined,
+        })
     }
     return wire_map
 }
@@ -16,7 +31,7 @@ enum WireType {
     Num,
     Xor,
     And,
-    Or
+    Or,
 }
 interface Wire {
     type: WireType
@@ -34,7 +49,13 @@ export function part1(wires: Map<string, Wire>) {
             zs.push(a)
         }
     }
-    const val = parseInt(zs.sort((a, b) => b[0].localeCompare(a[0])).map(([, value]) => value).join(''), 2)
+    const val = parseInt(
+        zs
+            .sort((a, b) => b[0].localeCompare(a[0]))
+            .map(([, value]) => value)
+            .join(''),
+        2
+    )
     return val
 }
 
