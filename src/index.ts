@@ -32,12 +32,14 @@ async function run_day(day: number, part: number) {
         }
         console.log(result)
 
-        if (results == undefined) {
+        if (results == undefined || results[day]?.[part - 1] == undefined) {
             console.log('New value!')
         } else {
             const saved_result = results[day]?.[part - 1]
             if (saved_result != result) {
-                console.log(`Result is different from real result: ${saved_result}`)
+                console.log(
+                    `Result is different from real result: ${saved_result}`
+                )
             }
         }
     }
